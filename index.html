@@ -1,0 +1,79 @@
+<HTML>
+<head>
+<style>
+#container {
+    width:90%;
+    height:90%;
+    margin-left:auto;
+    margin-right:auto;    
+    border:1px solid black;
+    
+}
+</style>
+<script src="lib/three.min.js"></script>
+<script src="lib/jquery-1.9.1.min.js"></script>
+</head>
+<body>
+<script>
+
+    var camera, scene, renderer;
+    var geometry, material, mesh;
+    var $container;
+
+    var myCube = new THREE.CubeGeometry( 200, 200, 200 );
+    myCube.name = 'myCube';
+
+    var mySphere = new THREE.SphereGeometry( 200, 16, 16 );
+    mySphere.name = 'mySphere';
+    
+    $(document).ready(function() {
+        $container = $('#container');
+        init();
+        animate();
+    });
+
+    function init() {
+
+        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+        camera.position.z = 500;
+
+        scene = new THREE.Scene();
+
+        material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
+
+        mesh = new THREE.Mesh( myCube, material );
+        mesh.geometry.dynamic = true;
+        scene.add( mesh );
+
+        renderer = new THREE.CanvasRenderer();
+        renderer.setSize($container.width(), $container.height());
+
+        //document.body.appendChild(renderer.domElement);
+        $container.append(renderer.domElement);
+        renderer.domElement.onclick = function() { switchMesh(); };
+    }
+    
+    function switchMesh() {
+        console.log(mesh.geometry);
+        if (mesh.geometry.name === 'mySphere') {
+            mesh.geometry = myCube;
+        } else {
+            mesh.geometry = mySphere;
+        }
+        //mesh.geometry.verticesNeedUpdate = true;
+        //mesh.geometry.normalsNeedUpdate = true;
+    }
+
+    function animate() {
+        // note: three.js includes requestAnimationFrame shim
+        requestAnimationFrame( animate );
+
+        mesh.rotation.x += 0.02;
+        mesh.rotation.y += 0.05;
+
+        renderer.render( scene, camera );
+    }
+
+</script>
+<div id='container'></div>
+</body>
